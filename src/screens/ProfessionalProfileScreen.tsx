@@ -8,17 +8,24 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
+  Dimensions,
+  Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   Explore: undefined;
-  Booking: undefined;
-  Chat: undefined;
+  ProfessionalProfile: { id: number };
+  Booking: { professionalId: string; date?: string; time?: string };
+  Chat: { professionalId: string };
+  DoctorReviews: { professionalId: string };
+  DoctorAvailability: { professionalId: string };
+  MedicalHistory: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type ProfessionalProfileRouteProp = RouteProp<RootStackParamList, 'ProfessionalProfile'>;
 
 interface Education {
   degree: string;
@@ -63,8 +70,11 @@ interface Professional {
   recentReviews: Review[];
 }
 
+const { width } = Dimensions.get('window');
+
 const ProfessionalProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<ProfessionalProfileRouteProp>();
 
   // Sample professional data
   const professional: Professional = {
@@ -110,15 +120,24 @@ const ProfessionalProfileScreen = () => {
         rating: 5, 
         date: '1 month ago',
         comment: 'Excellent doctor! She diagnosed my daughter\'s condition quickly and provided effective treatment. Very professional and knowledgeable.'
-      },
-      { 
-        id: 3, 
-        user: 'Grace T.', 
-        rating: 4, 
-        date: '2 months ago',
-        comment: 'Very good experience. Dr. Mukasa is great with kids and takes time to answer all questions. The only issue was a bit of waiting time.'
       }
     ]
+  };
+
+  const handleBookAppointment = () => {
+    navigation.navigate('MedicalHistory');
+  };
+
+  const handleChat = () => {
+    navigation.navigate('Chat', { professionalId: professional.id.toString() });
+  };
+
+  const handleViewReviews = () => {
+    navigation.navigate('DoctorReviews', { professionalId: professional.id.toString() });
+  };
+
+  const handleViewAvailability = () => {
+    navigation.navigate('DoctorAvailability', { professionalId: professional.id.toString() });
   };
 
   return (
@@ -127,26 +146,27 @@ const ProfessionalProfileScreen = () => {
       
       {/* Header */}
       <View style={styles.header}>
-        {/* Background header */}
-        <View style={styles.headerBackground} />
+        {/* <View style={styles.headerBackground} /> */}
         
-        {/* Back button */}
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => navigation.navigate('Explore')}
+          onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         
-        {/* Share button */}
         <TouchableOpacity style={styles.shareButton}>
           <Text style={styles.shareButtonText}>↗</Text>
         </TouchableOpacity>
-        
-        {/* Profile card */}
+      </View>
+
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.profileHeader}>
-            {/* Profile image */}
             <View style={styles.profileImage}>
               <Text style={styles.profileEmoji}>👩🏾‍⚕️</Text>
             </View>
@@ -167,7 +187,6 @@ const ProfessionalProfileScreen = () => {
             </View>
           </View>
           
-          {/* Quick info */}
           <View style={styles.quickInfo}>
             <View style={styles.infoItem}>
               <Text style={styles.infoIcon}>📍</Text>
@@ -183,97 +202,96 @@ const ProfessionalProfileScreen = () => {
             </View>
           </View>
           
-          {/* Action buttons */}
           <View style={styles.actionButtons}>
             <TouchableOpacity 
               style={styles.bookButton}
-              onPress={() => navigation.navigate('Booking')}
+              onPress={handleBookAppointment}
             >
               <Text style={styles.bookButtonText}>Book Now</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.chatButton}
-              onPress={() => navigation.navigate('Chat')}
+              onPress={handleChat}
             >
               <Text style={styles.chatButtonText}>Chat</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
-      
-      {/* Main content */}
-      <ScrollView style={styles.content}>
-        {/* About section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.aboutText}>{professional.about}</Text>
-        </View>
-        
-        {/* Education section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Education</Text>
-          {professional.education.map((edu, index) => (
-            <View key={index} style={styles.educationItem}>
-              <View style={styles.educationDot} />
-              <View>
-                <Text style={styles.educationDegree}>{edu.degree}</Text>
-                <Text style={styles.educationDetails}>{edu.institution}, {edu.year}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-        
-        {/* Services section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Services</Text>
-          {professional.services.map((service, index) => (
-            <View key={index} style={styles.serviceCard}>
-              <View style={styles.serviceInfo}>
-                <Text style={styles.serviceName}>{service.name}</Text>
-                <Text style={styles.serviceDuration}>{service.duration}</Text>
-              </View>
-              <Text style={styles.servicePrice}>{service.price}</Text>
-            </View>
-          ))}
-        </View>
-        
-        {/* Availability section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Availability</Text>
-          <View style={styles.availabilityCard}>
-            {professional.availability.map((slot, index) => (
-              <View key={index} style={styles.availabilityItem}>
-                <Text style={styles.availabilityDay}>{slot.day}</Text>
-                <Text style={styles.availabilityHours}>{slot.hours}</Text>
+
+        {/* Content */}
+        <View style={styles.content}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>About</Text>
+            <Text style={styles.aboutText}>{professional.about}</Text>
+          </View>
+          
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Education</Text>
+            {professional.education.map((edu, index) => (
+              <View key={index} style={styles.educationItem}>
+                <View style={styles.educationDot} />
+                <View>
+                  <Text style={styles.educationDegree}>{edu.degree}</Text>
+                  <Text style={styles.educationDetails}>{edu.institution}, {edu.year}</Text>
+                </View>
               </View>
             ))}
           </View>
-        </View>
-        
-        {/* Reviews section */}
-        <View style={styles.section}>
-          <View style={styles.reviewsHeader}>
-            <Text style={styles.sectionTitle}>Reviews</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAllText}>See All</Text>
-            </TouchableOpacity>
+          
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Services</Text>
+            {professional.services.map((service, index) => (
+              <View key={index} style={styles.serviceCard}>
+                <View style={styles.serviceInfo}>
+                  <Text style={styles.serviceName}>{service.name}</Text>
+                  <Text style={styles.serviceDuration}>{service.duration}</Text>
+                </View>
+                <Text style={styles.servicePrice}>{service.price}</Text>
+              </View>
+            ))}
           </View>
           
-          {professional.recentReviews.map(review => (
-            <View key={review.id} style={styles.reviewCard}>
-              <View style={styles.reviewHeader}>
-                <View>
-                  <Text style={styles.reviewUser}>{review.user}</Text>
-                  <Text style={styles.reviewDate}>{review.date}</Text>
-                </View>
-                <View style={styles.reviewRating}>
-                  <Text style={styles.reviewRatingText}>{review.rating}</Text>
-                  <Text style={styles.reviewRatingStar}>★</Text>
-                </View>
-              </View>
-              <Text style={styles.reviewComment}>{review.comment}</Text>
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Availability</Text>
+              <TouchableOpacity onPress={handleViewAvailability}>
+                <Text style={styles.seeAllText}>View Calendar</Text>
+              </TouchableOpacity>
             </View>
-          ))}
+            <View style={styles.availabilityCard}>
+              {professional.availability.map((slot, index) => (
+                <View key={index} style={styles.availabilityItem}>
+                  <Text style={styles.availabilityDay}>{slot.day}</Text>
+                  <Text style={styles.availabilityHours}>{slot.hours}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+          
+          <View style={styles.section}>
+            <View style={styles.reviewsHeader}>
+              <Text style={styles.sectionTitle}>Reviews</Text>
+              <TouchableOpacity onPress={handleViewReviews}>
+                <Text style={styles.seeAllText}>See All</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {professional.recentReviews.map(review => (
+              <View key={review.id} style={styles.reviewCard}>
+                <View style={styles.reviewHeader}>
+                  <View>
+                    <Text style={styles.reviewUser}>{review.user}</Text>
+                    <Text style={styles.reviewDate}>{review.date}</Text>
+                  </View>
+                  <View style={styles.reviewRating}>
+                    <Text style={styles.reviewRatingText}>{review.rating}</Text>
+                    <Text style={styles.reviewRatingStar}>★</Text>
+                  </View>
+                </View>
+                <Text style={styles.reviewComment}>{review.comment}</Text>
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -286,19 +304,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   header: {
-    position: 'relative',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: width * 0.2,
+    zIndex: 1,
   },
   headerBackground: {
-    height: 160,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: width * 0.2,
     backgroundColor: '#1e3a8a',
   },
   backButton: {
     position: 'absolute',
-    top: 48,
+    top: Platform.OS === 'ios' ? 48 : 16,
     left: 16,
     padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: '#1e3a8a',
     borderRadius: 20,
+    zIndex: 2,
   },
   backButtonText: {
     color: 'white',
@@ -306,36 +334,39 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     position: 'absolute',
-    top: 48,
+    top: Platform.OS === 'ios' ? 48 : 16,
     right: 16,
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 20,
+    zIndex: 2,
   },
   shareButtonText: {
     color: 'white',
     fontSize: 20,
   },
+  scrollView: {
+    flex: 1,
+  },
   profileCard: {
-    position: 'absolute',
-    top: 96,
-    left: 24,
-    right: 24,
+    marginTop: width * 0.2,
+    marginHorizontal: 16,
     backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 24,
+    borderRadius: 16,
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    zIndex: 2,
   },
   profileHeader: {
     flexDirection: 'row',
   },
   profileImage: {
-    width: 96,
-    height: 96,
+    width: width * 0.2,
+    height: width * 0.2,
     backgroundColor: '#DBEAFE',
     borderRadius: 12,
     alignItems: 'center',
@@ -343,7 +374,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   profileEmoji: {
-    fontSize: 48,
+    fontSize: width * 0.1,
   },
   profileInfo: {
     flex: 1,
@@ -395,7 +426,7 @@ const styles = StyleSheet.create({
   quickInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 24,
+    marginTop: 20,
   },
   infoItem: {
     flex: 1,
@@ -416,7 +447,7 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    marginTop: 24,
+    marginTop: 20,
     gap: 12,
   },
   bookButton: {
@@ -446,12 +477,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: {
-    flex: 1,
-    marginTop: 200,
-    paddingHorizontal: 24,
+    padding: 16,
+    backgroundColor: '#F9FAFB',
+    zIndex: 1,
   },
   section: {
     marginBottom: 32,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 18,

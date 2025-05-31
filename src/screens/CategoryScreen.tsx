@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,9 @@ import {
   SafeAreaView,
   ScrollView,
   FlatList,
+  TextInput,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,17 +26,30 @@ interface Professional {
   id: number;
   name: string;
   profession: string;
+  specialization: string;
   rating: number;
   reviews: number;
   price: string;
   image: string;
   verified: boolean;
+  location: string;
+  experience: string;
 }
+
+interface Filter {
+  id: string;
+  label: string;
+  active: boolean;
+}
+
+const { width } = Dimensions.get('window');
 
 const CategoryScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<CategoryScreenRouteProp>();
   const { category, icon, color } = route.params;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   // Sample professionals for the selected category
   const professionals: Professional[] = [
@@ -41,32 +57,51 @@ const CategoryScreen = () => {
       id: 1,
       name: 'Dr. Sarah Mukasa',
       profession: 'Pediatrician',
+      specialization: 'Child Health & Development',
       rating: 4.9,
       reviews: 124,
       price: 'UGX 50,000',
       image: '👩🏾‍⚕️',
-      verified: true
+      verified: true,
+      location: 'Kampala',
+      experience: '8 years'
     },
     {
       id: 2,
       name: 'Dr. Michael Ssemakula',
       profession: 'General Practitioner',
+      specialization: 'Family Medicine',
       rating: 4.8,
       reviews: 98,
       price: 'UGX 45,000',
       image: '👨🏾‍⚕️',
-      verified: true
+      verified: true,
+      location: 'Entebbe',
+      experience: '5 years'
     },
     {
       id: 3,
       name: 'Dr. Grace Nakimuli',
       profession: 'Dermatologist',
+      specialization: 'Skin & Hair',
       rating: 4.7,
       reviews: 87,
       price: 'UGX 60,000',
       image: '👩🏾‍⚕️',
-      verified: true
+      verified: true,
+      location: 'Kampala',
+      experience: '6 years'
     }
+  ];
+
+  // Filter options
+  const filters: Filter[] = [
+    { id: 'all', label: 'All', active: true },
+    { id: 'pediatrician', label: 'Pediatrician', active: false },
+    { id: 'gp', label: 'General Practitioner', active: false },
+    { id: 'dermatologist', label: 'Dermatologist', active: false },
+    { id: 'cardiology', label: 'Cardiology', active: false },
+    { id: 'neurology', label: 'Neurology', active: false }
   ];
 
   const renderProfessional = ({ item }: { item: Professional }) => (
@@ -86,6 +121,7 @@ const CategoryScreen = () => {
             )}
           </View>
           <Text style={styles.professionalTitle}>{item.profession}</Text>
+          <Text style={styles.professionalSpecialization}>{item.specialization}</Text>
           <View style={styles.professionalFooter}>
             <View style={styles.ratingContainer}>
               <Text style={styles.ratingStar}>★</Text>
@@ -95,6 +131,16 @@ const CategoryScreen = () => {
             <View style={styles.priceContainer}>
               <Text style={styles.priceText}>{item.price}</Text>
               <Text style={styles.priceUnit}>/session</Text>
+            </View>
+          </View>
+          <View style={styles.professionalMeta}>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaIcon}>📍</Text>
+              <Text style={styles.metaText}>{item.location}</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaIcon}>⏱️</Text>
+              <Text style={styles.metaText}>{item.experience}</Text>
             </View>
           </View>
         </View>
@@ -120,16 +166,58 @@ const CategoryScreen = () => {
         </View>
       </View>
 
+      {/* Search and Filter */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchInputContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search doctors..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#9CA3AF"
+          />
+        </View>
+        <TouchableOpacity 
+          style={styles.filterButton}
+          onPress={() => setShowFilters(!showFilters)}
+        >
+          <Text style={styles.filterIcon}>⚡</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Filters */}
+      {showFilters && (
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.filtersContainer}
+        >
+          {filters.map((filter) => (
+            <TouchableOpacity
+              key={filter.id}
+              style={[
+                styles.filterChip,
+                filter.active && styles.activeFilterChip
+              ]}
+            >
+              <Text style={[
+                styles.filterChipText,
+                filter.active && styles.activeFilterChipText
+              ]}>{filter.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+
       {/* Content */}
-      <ScrollView style={styles.content}>
-        <FlatList
-          data={professionals}
-          renderItem={renderProfessional}
-          keyExtractor={item => item.id.toString()}
-          scrollEnabled={false}
-          style={styles.professionalsList}
-        />
-      </ScrollView>
+      <FlatList
+        data={professionals}
+        renderItem={renderProfessional}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.professionalsList}
+        showsVerticalScrollIndicator={false}
+      />
     </SafeAreaView>
   );
 };
@@ -141,7 +229,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: 'white',
-    paddingTop: 8,
+    paddingTop: Platform.OS === 'ios' ? 8 : 16,
     paddingBottom: 16,
     paddingHorizontal: 24,
     flexDirection: 'row',
@@ -177,17 +265,76 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111827',
   },
-  content: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  searchInputContainer: {
     flex: 1,
-    padding: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    marginRight: 12,
+  },
+  searchIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 44,
+    fontSize: 16,
+    color: '#111827',
+  },
+  filterButton: {
+    width: 44,
+    height: 44,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterIcon: {
+    fontSize: 20,
+  },
+  filtersContainer: {
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  activeFilterChip: {
+    backgroundColor: '#1e3a8a',
+  },
+  filterChipText: {
+    fontSize: 14,
+    color: '#374151',
+  },
+  activeFilterChipText: {
+    color: 'white',
   },
   professionalsList: {
-    gap: 16,
+    padding: 16,
   },
   professionalCard: {
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 16,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -196,7 +343,6 @@ const styles = StyleSheet.create({
   },
   professionalContent: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   professionalImage: {
     width: 64,
@@ -232,11 +378,16 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 2,
   },
+  professionalSpecialization: {
+    fontSize: 14,
+    color: '#4B5563',
+    marginTop: 2,
+  },
   professionalFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: 8,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -271,6 +422,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     marginLeft: 2,
+  },
+  professionalMeta: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  metaIcon: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginRight: 4,
+  },
+  metaText: {
+    fontSize: 12,
+    color: '#6B7280',
   },
 });
 

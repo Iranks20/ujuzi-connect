@@ -20,6 +20,23 @@ import {
   OnboardingScreenTwo,
   OnboardingScreenThree,
   AIRecommendationsScreen,
+  DoctorSpecializationScreen,
+  DoctorReviewsScreen,
+  DoctorAvailabilityScreen,
+  MedicalHistoryScreen,
+  BookingScreen,
+  PaymentScreen,
+  PaymentConfirmationScreen,
+  CategoryScreen,
+  ProfessionalProfileScreen,
+  ChatScreen,
+  GroupsScreen,
+  ChatListScreen,
+  GroupChatScreen,
+  AccountProfileScreen,
+  JobsScreen,
+  JobDetailsScreen,
+  RecruiterDashboardScreen,
 } from './src/screens';
 
 // Define the root stack navigator type
@@ -31,9 +48,23 @@ export type RootStackParamList = {
   OnboardingThree: undefined;
   AIRecommendations: undefined;
   MainApp: undefined;
-  Booking: undefined;
-  Payment: undefined;
-  PaymentConfirmation: undefined;
+  Booking: { professionalId: string; date?: string; time?: string };
+  Payment: { bookingId: string; amount: number };
+  PaymentConfirmation: { bookingId: string };
+  DoctorSpecialization: undefined;
+  DoctorReviews: { professionalId: string };
+  DoctorAvailability: { professionalId: string };
+  MedicalHistory: undefined;
+  Category: { category: string; icon: string; color: string };
+  ProfessionalProfile: { id: number };
+  Chat: { professionalId: string };
+  Groups: undefined;
+  ChatList: undefined;
+  GroupChat: { groupId: string; groupName: string };
+  Account: undefined;
+  Jobs: undefined;
+  JobDetails: { jobId: string };
+  RecruiterDashboard: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -64,6 +95,23 @@ export default function App() {
               animation: 'none',
             }}
           />
+          <Stack.Screen name="Booking" component={BookingScreen} />
+          <Stack.Screen name="Payment" component={PaymentScreen} />
+          <Stack.Screen name="PaymentConfirmation" component={PaymentConfirmationScreen} />
+          <Stack.Screen name="DoctorSpecialization" component={DoctorSpecializationScreen} />
+          <Stack.Screen name="DoctorReviews" component={DoctorReviewsScreen} />
+          <Stack.Screen name="DoctorAvailability" component={DoctorAvailabilityScreen} />
+          <Stack.Screen name="MedicalHistory" component={MedicalHistoryScreen} />
+          <Stack.Screen name="Category" component={CategoryScreen} />
+          <Stack.Screen name="ProfessionalProfile" component={ProfessionalProfileScreen} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen name="Groups" component={GroupsScreen} />
+          <Stack.Screen name="ChatList" component={ChatListScreen} />
+          <Stack.Screen name="GroupChat" component={GroupChatScreen} />
+          <Stack.Screen name="Account" component={AccountProfileScreen} />
+          <Stack.Screen name="Jobs" component={JobsScreen} />
+          <Stack.Screen name="JobDetails" component={JobDetailsScreen} />
+          <Stack.Screen name="RecruiterDashboard" component={RecruiterDashboardScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
