@@ -61,7 +61,7 @@ const GroupsScreen = () => {
   const allGroups: Group[] = [
     {
       id: 4,
-      name: 'Architects & Designers',
+      name: 'Financial Advisors',     
       members: 645,
       image: '🏗️',
       color: '#D1FAE5',
@@ -77,7 +77,7 @@ const GroupsScreen = () => {
     },
     {
       id: 6,
-      name: 'Financial Advisors',
+      name: 'Architects & Designers',
       members: 532,
       image: '💰',
       color: '#E0E7FF',
@@ -333,36 +333,43 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    width: '48%',
   },
   allGroupImage: {
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    aspectRatio: 1,
   },
   allGroupContent: {
-    padding: 16,
+    padding: 12,
   },
   groupEmoji: {
     fontSize: 32,
   },
   groupHeader: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
   groupName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     color: '#111827',
+    marginBottom: 4,
   },
   memberCount: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#6B7280',
+    marginBottom: 8,
   },
   joinButton: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: 20,
+    minWidth: 70,
+    alignItems: 'center',
+    alignSelf: 'flex-start',
   },
   joinButtonActive: {
     backgroundColor: '#2563EB',
@@ -371,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E7EB',
   },
   joinButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
   },
   joinButtonTextActive: {
@@ -383,16 +390,17 @@ const styles = StyleSheet.create({
   activeDiscussions: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 8,
   },
   activeDiscussionsText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#6B7280',
   },
   allGroupsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginHorizontal: -6,
   },
 });
 

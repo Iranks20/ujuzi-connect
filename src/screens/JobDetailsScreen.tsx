@@ -9,13 +9,17 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
 
 type RootStackParamList = {
-  Jobs: undefined;
+  JobDetails: { id: number };
+  JobApplication: { jobId: number };
+  JobApplicationSuccess: undefined;
 };
 
+type JobDetailsRouteProp = RouteProp<RootStackParamList, 'JobDetails'>;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface ContactPerson {
@@ -44,7 +48,20 @@ interface Job {
 
 const JobDetailsScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  
+  const route = useRoute<JobDetailsRouteProp>();
+  const { id } = route.params;
+
+  // This should be replaced with actual user role check
+  const isRecruiter = false;
+
+  const handleApply = () => {
+    navigation.navigate('JobApplication', { jobId: id });
+  };
+
+  const handleViewApplications = () => {
+    navigation.navigate('JobApplicationsList', { jobId: id });
+  };
+
   // Sample job data
   const job: Job = {
     id: 1,
@@ -219,15 +236,23 @@ const JobDetailsScreen = () => {
         </View>
       </ScrollView>
       
-      {/* Apply button */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.applyButton}>
-          <Text style={styles.applyButtonText}>Apply for this Position</Text>
+      {/* Action buttons */}
+      <View style={styles.actionButtons}>
+        <TouchableOpacity
+          style={styles.applyButton}
+          onPress={handleApply}
+        >
+          <Text style={styles.applyButtonText}>Apply Now</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.saveButton}>
-          <Text style={styles.saveButtonIcon}>🔖</Text>
-          <Text style={styles.saveButtonText}>Save Job</Text>
-        </TouchableOpacity>
+        
+        {isRecruiter && (
+          <TouchableOpacity
+            style={styles.viewApplicationsButton}
+            onPress={handleViewApplications}
+          >
+            <Text style={styles.viewApplicationsButtonText}>View Applications</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -391,11 +416,13 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 2,
   },
-  footer: {
+  actionButtons: {
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
     padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   applyButton: {
     backgroundColor: '#2563EB',
@@ -408,19 +435,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  saveButton: {
-    flexDirection: 'row',
+  viewApplicationsButton: {
+    backgroundColor: '#2563EB',
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
   },
-  saveButtonIcon: {
+  viewApplicationsButtonText: {
+    color: 'white',
     fontSize: 16,
-    marginRight: 4,
-  },
-  saveButtonText: {
-    color: '#2563EB',
-    fontSize: 14,
     fontWeight: '500',
   },
 });

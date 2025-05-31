@@ -14,7 +14,17 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { JobsStackParamList } from '../components/BottomNavigation';
 
-type NavigationProp = NativeStackNavigationProp<JobsStackParamList>;
+type RootStackParamList = {
+  Jobs: undefined;
+  JobDetails: { id: number };
+  JobApplication: { jobId: number };
+  JobApplicationsList: { jobId: number };
+  JobPost: undefined;
+  JobSearchResults: { query: string };
+  RecruiterDashboard: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface JobCategory {
   id: number;
@@ -123,6 +133,24 @@ const JobsScreen = () => {
     }
   ];
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigation.navigate('JobSearchResults', { query: searchQuery });
+    }
+  };
+
+  const handleJobPress = (jobId: number) => {
+    navigation.navigate('JobDetails', { id: jobId });
+  };
+
+  const handlePostJob = () => {
+    navigation.navigate('JobPost');
+  };
+
+  const handleViewApplications = (jobId: number) => {
+    navigation.navigate('JobApplicationsList', { jobId });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -141,10 +169,11 @@ const JobsScreen = () => {
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
-            placeholder="Search jobs, companies, or keywords"
+            placeholder="Search jobs"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor="#9CA3AF"
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
           />
         </View>
       </View>
@@ -177,7 +206,7 @@ const JobsScreen = () => {
             <TouchableOpacity 
               key={job.id}
               style={[styles.jobCard, styles.featuredJobCard]}
-              onPress={() => navigation.navigate('JobDetails', { id: job.id })}
+              onPress={() => handleJobPress(job.id)}
             >
               <View style={styles.jobContent}>
                 <View style={styles.jobLogo}>
@@ -211,9 +240,14 @@ const JobsScreen = () => {
                   </View>
                   <View style={styles.jobFooter}>
                     <Text style={styles.postedTime}>Posted {job.posted}</Text>
-                    <TouchableOpacity style={styles.applyButton}>
-                      <Text style={styles.applyButtonText}>Apply Now</Text>
-                    </TouchableOpacity>
+                    <View style={styles.jobActions}>
+                      <TouchableOpacity
+                        style={styles.applyButton}
+                        onPress={() => navigation.navigate('JobApplication', { jobId: job.id })}
+                      >
+                        <Text style={styles.applyButtonText}>Apply Now</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -228,7 +262,7 @@ const JobsScreen = () => {
             <TouchableOpacity 
               key={job.id}
               style={styles.jobCard}
-              onPress={() => navigation.navigate('JobDetails', { id: job.id })}
+              onPress={() => handleJobPress(job.id)}
             >
               <View style={styles.jobContent}>
                 <View style={styles.jobLogo}>
@@ -253,9 +287,14 @@ const JobsScreen = () => {
                   </View>
                   <View style={styles.jobFooter}>
                     <Text style={styles.postedTime}>Posted {job.posted}</Text>
-                    <TouchableOpacity style={styles.applyButton}>
-                      <Text style={styles.applyButtonText}>Apply Now</Text>
-                    </TouchableOpacity>
+                    <View style={styles.jobActions}>
+                      <TouchableOpacity
+                        style={styles.applyButton}
+                        onPress={() => navigation.navigate('JobApplication', { jobId: job.id })}
+                      >
+                        <Text style={styles.applyButtonText}>Apply Now</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -263,6 +302,16 @@ const JobsScreen = () => {
           ))}
         </View>
       </ScrollView>
+
+      {/* Post Job button for recruiters */}
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity
+          style={styles.postJobButton}
+          onPress={handlePostJob}
+        >
+          <Text style={styles.postJobButtonText}>Post a Job</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -326,6 +375,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 24,
+    paddingBottom: 100,
   },
   section: {
     marginBottom: 24,
@@ -464,6 +514,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
   },
+  jobActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   applyButton: {
     backgroundColor: '#2563EB',
     paddingHorizontal: 12,
@@ -473,6 +527,25 @@ const styles = StyleSheet.create({
   applyButtonText: {
     color: 'white',
     fontSize: 14,
+    fontWeight: '500',
+  },
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  postJobButton: {
+    backgroundColor: '#2563EB',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  postJobButtonText: {
+    color: 'white',
+    fontSize: 16,
     fontWeight: '500',
   },
 });

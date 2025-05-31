@@ -36,6 +36,11 @@ import {
   AccountProfileScreen,
   JobsScreen,
   JobDetailsScreen,
+  JobApplicationScreen,
+  JobApplicationsListScreen,
+  JobPostScreen,
+  JobSearchResultsScreen,
+  JobApplicationSuccessScreen,
   RecruiterDashboardScreen,
 } from './src/screens';
 
@@ -63,7 +68,12 @@ export type RootStackParamList = {
   GroupChat: { groupId: string; groupName: string };
   Account: undefined;
   Jobs: undefined;
-  JobDetails: { jobId: string };
+  JobDetails: { id: number };
+  JobApplication: { jobId: number };
+  JobApplicationsList: { jobId: number };
+  JobPost: undefined;
+  JobSearchResults: { query: string };
+  JobApplicationSuccess: undefined;
   RecruiterDashboard: undefined;
 };
 
@@ -111,6 +121,11 @@ export default function App() {
           <Stack.Screen name="Account" component={AccountProfileScreen} />
           <Stack.Screen name="Jobs" component={JobsScreen} />
           <Stack.Screen name="JobDetails" component={JobDetailsScreen} />
+          <Stack.Screen name="JobApplication" component={JobApplicationScreen} />
+          <Stack.Screen name="JobApplicationsList" component={JobApplicationsListScreen} />
+          <Stack.Screen name="JobPost" component={JobPostScreen} />
+          <Stack.Screen name="JobSearchResults" component={JobSearchResultsScreen} />
+          <Stack.Screen name="JobApplicationSuccess" component={JobApplicationSuccessScreen} />
           <Stack.Screen name="RecruiterDashboard" component={RecruiterDashboardScreen} />
         </Stack.Navigator>
       </NavigationContainer>

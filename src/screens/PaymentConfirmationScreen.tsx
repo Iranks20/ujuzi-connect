@@ -14,7 +14,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   Chat: undefined;
-  Home: undefined;
+  ProfessionalProfile: { id: number };
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -191,7 +191,7 @@ const PaymentConfirmationScreen = () => {
           
           <TouchableOpacity 
             style={styles.doneButton}
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => navigation.navigate('ProfessionalProfile', { id: 1 })}
           >
             <Text style={styles.doneButtonText}>Done</Text>
           </TouchableOpacity>
