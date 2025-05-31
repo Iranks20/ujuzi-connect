@@ -15,12 +15,21 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type RootStackParamList = {
+  Category: {
+    category: string;
+    icon: string;
+    color: string;
+    subCategories: {
+      id: number;
+      name: string;
+      icon: string;
+    }[];
+  };
   ProfessionalProfile: { id: number };
-  CategoryScreen: { category: string; icon: string; color: string };
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-type CategoryScreenRouteProp = RouteProp<RootStackParamList, 'CategoryScreen'>;
+type CategoryScreenRouteProp = RouteProp<RootStackParamList, 'Category'>;
 
 interface Professional {
   id: number;
@@ -47,9 +56,10 @@ const { width } = Dimensions.get('window');
 const CategoryScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<CategoryScreenRouteProp>();
-  const { category, icon, color } = route.params;
+  const { category, icon, color, subCategories } = route.params;
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedSubCategory, setSelectedSubCategory] = useState(subCategories[0].id);
 
   // Sample professionals for the selected category
   const professionals: Professional[] = [
@@ -103,6 +113,28 @@ const CategoryScreen = () => {
     { id: 'cardiology', label: 'Cardiology', active: false },
     { id: 'neurology', label: 'Neurology', active: false }
   ];
+
+  const renderSubCategory = ({ item }: { item: { id: number; name: string; icon: string } }) => (
+    <TouchableOpacity 
+      style={[
+        styles.subCategoryCard,
+        selectedSubCategory === item.id && styles.selectedSubCategoryCard
+      ]}
+      onPress={() => {
+        setSelectedSubCategory(item.id);
+        console.log('Selected subcategory:', item.name);
+      }}
+    >
+      <Text style={[
+        styles.subCategoryIcon,
+        selectedSubCategory === item.id && styles.selectedSubCategoryIcon
+      ]}>{item.icon}</Text>
+      <Text style={[
+        styles.subCategoryName,
+        selectedSubCategory === item.id && styles.selectedSubCategoryName
+      ]}>{item.name}</Text>
+    </TouchableOpacity>
+  );
 
   const renderProfessional = ({ item }: { item: Professional }) => (
     <TouchableOpacity 
@@ -166,6 +198,39 @@ const CategoryScreen = () => {
         </View>
       </View>
 
+      {/* Subcategories */}
+      <View style={styles.subCategoriesSection}>
+        <Text style={styles.sectionTitle}>Select Category</Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.subCategoriesScrollContent}
+        >
+          {subCategories.map((item) => (
+            <TouchableOpacity 
+              key={item.id}
+              style={[
+                styles.subCategoryCard,
+                selectedSubCategory === item.id && styles.selectedSubCategoryCard
+              ]}
+              onPress={() => {
+                setSelectedSubCategory(item.id);
+                console.log('Selected subcategory:', item.name);
+              }}
+            >
+              <Text style={[
+                styles.subCategoryIcon,
+                selectedSubCategory === item.id && styles.selectedSubCategoryIcon
+              ]}>{item.icon}</Text>
+              <Text style={[
+                styles.subCategoryName,
+                selectedSubCategory === item.id && styles.selectedSubCategoryName
+              ]}>{item.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       {/* Search and Filter */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
@@ -210,14 +275,19 @@ const CategoryScreen = () => {
         </ScrollView>
       )}
 
-      {/* Content */}
-      <FlatList
-        data={professionals}
-        renderItem={renderProfessional}
-        keyExtractor={item => item.id.toString()}
-        contentContainerStyle={styles.professionalsList}
-        showsVerticalScrollIndicator={false}
-      />
+      {/* Professionals List */}
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Available Professionals</Text>
+          <FlatList
+            data={professionals}
+            renderItem={renderProfessional}
+            keyExtractor={item => item.id.toString()}
+            scrollEnabled={false}
+            style={styles.professionalsList}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -327,14 +397,66 @@ const styles = StyleSheet.create({
   activeFilterChipText: {
     color: 'white',
   },
+  subCategoriesSection: {
+    backgroundColor: 'white',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  subCategoriesScrollContent: {
+    paddingHorizontal: 12,
+    gap: 8,
+  },
+  subCategoryCard: {
+    width: 100,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F9FAFB',
+    marginRight: 8,
+  },
+  selectedSubCategoryCard: {
+    backgroundColor: '#1e3a8a',
+  },
+  subCategoryIcon: {
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  selectedSubCategoryIcon: {
+    color: 'white',
+  },
+  subCategoryName: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#1F2937',
+    textAlign: 'center',
+  },
+  selectedSubCategoryName: {
+    color: 'white',
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+  },
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 8,
+    paddingHorizontal: 12,
+  },
   professionalsList: {
-    padding: 16,
+    gap: 16,
   },
   professionalCard: {
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,

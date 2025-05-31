@@ -23,6 +23,11 @@ interface Category {
   name: string;
   icon: string;
   color: string;
+  subCategories: {
+    id: number;
+    name: string;
+    icon: string;
+  }[];
 }
 
 interface Professional {
@@ -40,16 +45,94 @@ const ExploreScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const tabNavigation = useNavigation<TabNavigationProp>();
 
-  // Sample categories
+  // Updated categories with more fields
   const categories: Category[] = [
-    { id: 1, name: 'Doctors', icon: '👨‍⚕️', color: '#dbeafe' },
-    { id: 2, name: 'Lawyers', icon: '⚖️', color: '#f3e8ff' },
-    { id: 3, name: 'Engineers', icon: '👷', color: '#dcfce7' },
-    { id: 4, name: 'Tutors', icon: '👨‍🏫', color: '#fef9c3' },
-    { id: 5, name: 'Psychologists', icon: '🧠', color: '#fee2e2' },
-    { id: 6, name: 'Accountants', icon: '📊', color: '#e0e7ff' },
-    { id: 7, name: 'Designers', icon: '🎨', color: '#fce7f3' },
-    { id: 8, name: 'Consultants', icon: '💼', color: '#ffedd5' }
+    {
+      id: 1,
+      name: 'Healthcare',
+      icon: '🏥',
+      color: '#dbeafe',
+      subCategories: [
+        { id: 1, name: 'Doctors', icon: '👨‍⚕️' },
+        { id: 2, name: 'Nurses', icon: '👩‍⚕️' },
+        { id: 3, name: 'Pediatricians', icon: '👶' },
+        { id: 4, name: 'Dentists', icon: '🦷' },
+        { id: 5, name: 'Psychologists', icon: '🧠' }
+      ]
+    },
+    {
+      id: 2,
+      name: 'Technology',
+      icon: '💻',
+      color: '#f3e8ff',
+      subCategories: [
+        { id: 1, name: 'Software Engineers', icon: '👨‍💻' },
+        { id: 2, name: 'Data Scientists', icon: '📊' },
+        { id: 3, name: 'UI/UX Designers', icon: '🎨' },
+        { id: 4, name: 'DevOps Engineers', icon: '⚙️' },
+        { id: 5, name: 'Mobile Developers', icon: '📱' }
+      ]
+    },
+    {
+      id: 3,
+      name: 'Education',
+      icon: '📚',
+      color: '#dcfce7',
+      subCategories: [
+        { id: 1, name: 'Tutors', icon: '👨‍🏫' },
+        { id: 2, name: 'Language Teachers', icon: '🗣️' },
+        { id: 3, name: 'Music Teachers', icon: '🎵' },
+        { id: 4, name: 'Sports Coaches', icon: '⚽' }
+      ]
+    },
+    {
+      id: 4,
+      name: 'Business',
+      icon: '💼',
+      color: '#fef9c3',
+      subCategories: [
+        { id: 1, name: 'Accountants', icon: '📊' },
+        { id: 2, name: 'Lawyers', icon: '⚖️' },
+        { id: 3, name: 'Consultants', icon: '💡' },
+        { id: 4, name: 'Financial Advisors', icon: '💰' }
+      ]
+    },
+    {
+      id: 5,
+      name: 'Engineering',
+      icon: '⚡',
+      color: '#fee2e2',
+      subCategories: [
+        { id: 1, name: 'Civil Engineers', icon: '🏗️' },
+        { id: 2, name: 'Mechanical Engineers', icon: '🔧' },
+        { id: 3, name: 'Electrical Engineers', icon: '⚡' },
+        { id: 4, name: 'Architects', icon: '🏛️' }
+      ]
+    },
+    {
+      id: 6,
+      name: 'Creative',
+      icon: '🎨',
+      color: '#fce7f3',
+      subCategories: [
+        { id: 1, name: 'Graphic Designers', icon: '🎨' },
+        { id: 2, name: 'Photographers', icon: '📸' },
+        { id: 3, name: 'Content Writers', icon: '✍️' },
+        { id: 4, name: 'Video Editors', icon: '🎬' }
+      ]
+    },
+    {
+      id: 7,
+      name: 'Wellness',
+      icon: '🧘',
+      color: '#e0e7ff',
+      subCategories: [
+        { id: 1, name: 'Fitness Trainers', icon: '💪' },
+        { id: 2, name: 'Yoga Instructors', icon: '��' },
+        { id: 3, name: 'Nutritionists', icon: '🥗' },
+        { id: 4, name: 'Life Coaches', icon: '🎯' }
+      ]
+    }
   ];
 
   // Sample featured professionals
@@ -116,13 +199,15 @@ const ExploreScreen = () => {
       onPress={() => navigation.navigate('Category', {
         category: item.name,
         icon: item.icon,
-        color: item.color
+        color: item.color,
+        subCategories: item.subCategories
       })}
     >
-      <View style={[styles.categoryIcon, { backgroundColor: item.color }]}>
+      <View style={styles.categoryIcon}>
         <Text style={styles.categoryIconText}>{item.icon}</Text>
       </View>
       <Text style={styles.categoryName}>{item.name}</Text>
+      <Text style={styles.categoryCount}>{item.subCategories.length} categories</Text>
     </TouchableOpacity>
   );
 
@@ -221,19 +306,14 @@ const ExploreScreen = () => {
       <ScrollView style={styles.content}>
         {/* Categories */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Categories</Text>
-          <FlatList
-            data={categories}
-            renderItem={renderCategory}
-            keyExtractor={item => item.id.toString()}
-            numColumns={4}
-            scrollEnabled={false}
-            style={styles.categoriesGrid}
-          />
+          <Text style={styles.sectionTitle}>Explore Fields</Text>
+          <View style={styles.categoriesGrid}>
+            {categories.map((item) => renderCategory({ item }))}
+          </View>
         </View>
 
         {/* Featured Professionals */}
-        <View style={styles.section}>
+        <View style={[styles.section, styles.featuredSection]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Professionals</Text>
             <TouchableOpacity>
@@ -384,10 +464,14 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 24,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 10,
+    paddingTop: 24,
+  },
+  featuredSection: {
+    paddingTop: -5,
+    marginBottom: 24,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -396,9 +480,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: '#111827',
+    marginBottom: 16,
   },
   seeAllText: {
     fontSize: 14,
@@ -406,20 +491,29 @@ const styles = StyleSheet.create({
     color: '#1e3a8a',
   },
   categoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -8,
     marginBottom: 8,
   },
   categoryItem: {
-    flex: 1,
-    alignItems: 'center',
+    width: '25%',
+    paddingHorizontal: 8,
     marginBottom: 16,
   },
   categoryIcon: {
-    width: 56,
-    height: 56,
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   categoryIconText: {
     fontSize: 24,
@@ -428,6 +522,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: '#374151',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  categoryCount: {
+    fontSize: 10,
+    color: '#6B7280',
     textAlign: 'center',
   },
   professionalsList: {
