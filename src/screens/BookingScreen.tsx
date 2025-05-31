@@ -102,7 +102,7 @@ const BookingScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: 'white',
     paddingHorizontal: 24,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

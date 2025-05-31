@@ -12,13 +12,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BottomNavigation from '../components/BottomNavigation';
+import type { JobsStackParamList } from '../components/BottomNavigation';
 
-type RootStackParamList = {
-  JobDetails: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<JobsStackParamList>;
 
 interface JobCategory {
   id: number;
@@ -129,7 +125,7 @@ const JobsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -181,7 +177,7 @@ const JobsScreen = () => {
             <TouchableOpacity 
               key={job.id}
               style={[styles.jobCard, styles.featuredJobCard]}
-              onPress={() => navigation.navigate('JobDetails')}
+              onPress={() => navigation.navigate('JobDetails', { id: job.id })}
             >
               <View style={styles.jobContent}>
                 <View style={styles.jobLogo}>
@@ -232,7 +228,7 @@ const JobsScreen = () => {
             <TouchableOpacity 
               key={job.id}
               style={styles.jobCard}
-              onPress={() => navigation.navigate('JobDetails')}
+              onPress={() => navigation.navigate('JobDetails', { id: job.id })}
             >
               <View style={styles.jobContent}>
                 <View style={styles.jobLogo}>
@@ -267,9 +263,6 @@ const JobsScreen = () => {
           ))}
         </View>
       </ScrollView>
-      
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab="jobs" />
     </SafeAreaView>
   );
 };
@@ -282,7 +275,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'white',
     paddingHorizontal: 24,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

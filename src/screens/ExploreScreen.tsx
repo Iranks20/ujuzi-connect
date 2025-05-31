@@ -12,14 +12,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { ExploreStackParamList, RootTabParamList } from '../components/BottomNavigation';
 
-type RootStackParamList = {
-  ProfessionalProfile: { id: number };
-  AccountProfile: undefined;
-  CategoryScreen: { category: string; icon: string; color: string };
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<ExploreStackParamList>;
+type TabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
 
 interface Category {
   id: number;
@@ -41,6 +38,7 @@ interface Professional {
 
 const ExploreScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const tabNavigation = useNavigation<TabNavigationProp>();
 
   // Sample categories
   const categories: Category[] = [
@@ -115,7 +113,7 @@ const ExploreScreen = () => {
   const renderCategory = ({ item }: { item: Category }) => (
     <TouchableOpacity 
       style={styles.categoryItem}
-      onPress={() => navigation.navigate('CategoryScreen', {
+      onPress={() => navigation.navigate('Category', {
         category: item.name,
         icon: item.icon,
         color: item.color
@@ -178,7 +176,7 @@ const ExploreScreen = () => {
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.profileButton}
-              onPress={() => navigation.navigate('AccountProfile')}
+              onPress={() => tabNavigation.navigate('Account')}
             >
               <Text style={styles.profileIcon}>👤</Text>
             </TouchableOpacity>

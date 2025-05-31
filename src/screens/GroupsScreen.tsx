@@ -13,13 +13,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BottomNavigation from '../components/BottomNavigation';
+import type { GroupsStackParamList } from '../components/BottomNavigation';
 
-type RootStackParamList = {
-  GroupChat: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<GroupsStackParamList>;
 
 interface Group {
   id: number;
@@ -117,7 +113,7 @@ const GroupsScreen = () => {
     <TouchableOpacity 
       key={item.id}
       style={styles.featuredGroupCard}
-      onPress={() => navigation.navigate('GroupChat')}
+      onPress={() => navigation.navigate('GroupChat', { groupId: item.id })}
     >
       <View style={[styles.featuredGroupImage, { backgroundColor: item.color }]}>
         <Text style={styles.groupEmoji}>{item.image}</Text>
@@ -152,7 +148,7 @@ const GroupsScreen = () => {
     <TouchableOpacity 
       key={item.id}
       style={styles.allGroupCard}
-      onPress={() => navigation.navigate('GroupChat')}
+      onPress={() => navigation.navigate('GroupChat', { groupId: item.id })}
     >
       <View style={[styles.allGroupImage, { backgroundColor: item.color }]}>
         <Text style={styles.groupEmoji}>{item.image}</Text>
@@ -188,7 +184,7 @@ const GroupsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -233,9 +229,6 @@ const GroupsScreen = () => {
           </View>
         </View>
       </ScrollView>
-      
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab="groups" />
     </SafeAreaView>
   );
 };
@@ -248,7 +241,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'white',
     paddingHorizontal: 24,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

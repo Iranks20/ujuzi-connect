@@ -11,13 +11,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { AccountStackParamList } from '../components/BottomNavigation';
+import type { RootStackParamList } from '../../App';
 
-type RootStackParamList = {
-  Explore: undefined;
-  Login: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<AccountStackParamList>;
+type RootNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Subscription {
   plan: string;
@@ -58,6 +56,7 @@ interface SettingsSection {
 
 const AccountProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const rootNavigation = useNavigation<RootNavigationProp>();
 
   // Sample user data
   const user: User = {
@@ -133,7 +132,7 @@ const AccountProfileScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -236,7 +235,7 @@ const AccountProfileScreen = () => {
           {/* Logout button */}
           <TouchableOpacity 
             style={styles.logoutButton}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => rootNavigation.navigate('Login')}
           >
             <Text style={styles.logoutButtonText}>Log Out</Text>
           </TouchableOpacity>
@@ -256,7 +255,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 16,
     backgroundColor: 'white',
     borderBottomWidth: 1,

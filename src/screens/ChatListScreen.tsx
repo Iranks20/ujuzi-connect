@@ -12,13 +12,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BottomNavigation from '../components/BottomNavigation';
+import type { ChatStackParamList } from '../components/BottomNavigation';
 
-type RootStackParamList = {
-  Chat: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<ChatStackParamList>;
 
 interface Professional {
   name: string;
@@ -125,7 +121,7 @@ const ChatListScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -155,7 +151,7 @@ const ChatListScreen = () => {
           <TouchableOpacity 
             key={conversation.id}
             style={styles.conversationItem}
-            onPress={() => navigation.navigate('Chat')}
+            onPress={() => navigation.navigate('Chat', { professionalId: conversation.id })}
           >
             <View style={styles.conversationContent}>
               {/* Profile image */}
@@ -204,9 +200,6 @@ const ChatListScreen = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab="chat" />
     </SafeAreaView>
   );
 };
@@ -219,7 +212,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'white',
     paddingHorizontal: 24,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

@@ -14,12 +14,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { GroupsStackParamList } from '../components/BottomNavigation';
 
-type RootStackParamList = {
-  Groups: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<GroupsStackParamList>;
 
 interface Sender {
   name: string;
@@ -135,14 +132,14 @@ const GroupChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={() => navigation.navigate('Groups')}
+            onPress={() => navigation.navigate('GroupsMain')}
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
@@ -275,7 +272,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'white',
     paddingHorizontal: 16,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

@@ -14,13 +14,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ChatStackParamList } from '../components/BottomNavigation';
+import type { RootStackParamList } from '../../App';
 
-type RootStackParamList = {
-  ChatList: undefined;
-  Booking: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<ChatStackParamList>;
+type RootNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Professional {
   id: number;
@@ -41,6 +39,7 @@ interface Message {
 
 const ChatScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const rootNavigation = useNavigation<RootNavigationProp>();
   const [message, setMessage] = useState('');
   
   // Sample professional data
@@ -129,7 +128,7 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       
       {/* Header */}
       <View style={styles.header}>
@@ -226,7 +225,7 @@ const ChatScreen = () => {
           </View>
           <TouchableOpacity 
             style={styles.bookButton}
-            onPress={() => navigation.navigate('Booking')}
+            onPress={() => rootNavigation.navigate('Booking')}
           >
             <Text style={styles.bookButtonText}>Book Now</Text>
           </TouchableOpacity>
@@ -263,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     paddingHorizontal: 16,
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },

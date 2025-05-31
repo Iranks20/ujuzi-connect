@@ -38,7 +38,7 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       {/* Header with back button and title */}
       <View style={styles.header}>
         <TouchableOpacity 
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 48,
+    paddingTop: 8,
     paddingBottom: 24,
     paddingHorizontal: 24,
   },
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 24,
-    color: '#374151', // gray-700
+    color: '#374151',
   },
   headerTitle: {
     fontSize: 20,

@@ -38,7 +38,7 @@ const SignUpScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" />
       <ScrollView style={styles.content}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
